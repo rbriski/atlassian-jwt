@@ -12,7 +12,7 @@ import (
 	"path"
 
 	jira "github.com/andygrunwald/go-jira"
-	jwt "github.com/rbriski/jira-jwt"
+	jwt "github.com/rbriski/atlassian-jwt"
 )
 
 // IssueEvent holds all issue change data
