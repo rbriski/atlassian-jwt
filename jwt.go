@@ -1,9 +1,12 @@
 package jwt
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"net/http"
+	"net/url"
+	"sort"
 	"strings"
 	"time"
 
@@ -91,14 +94,77 @@ func (c *Config) SetAuthHeader(r *http.Request) error {
 }
 
 // QSH returns the query string hash for this request
+// https://developer.atlassian.com/cloud/bitbucket/query-string-hash/
 func (c *Config) QSH(req *http.Request) string {
+	// Uppercase method
 	method := strings.ToUpper(req.Method)
-	path := strings.Replace(req.URL.Path, "&", "%26", -1)
-	canonicalURL := strings.Join([]string{method, path, ""}, "&")
 
+	// Path can not contain &
+	path := strings.Replace(req.URL.Path, "&", "%26", -1)
+	params := encodeQuery(req.URL.Query())
+
+	// Join method, path and params with &
+	canonicalURL := strings.Join([]string{method, path, params}, "&")
+
+	// SHA-256 encoding
 	h := sha256.New()
 	h.Write([]byte(canonicalURL))
+
+	// Must return the hash as hex
 	return hex.EncodeToString(h.Sum(nil))
+}
+
+// encodeQuery uses the QSH description from
+// https://developer.atlassian.com/cloud/bitbucket/query-string-hash/
+func encodeQuery(vals url.Values) string {
+	// Empty params still must be treated as a value
+	if len(vals) == 0 {
+		return ""
+	}
+
+	var buf bytes.Buffer
+	keys := make([]string, 0, len(vals))
+	for k := range vals {
+		keys = append(keys, k)
+	}
+
+	// Keys must be sortedd
+	sort.Strings(keys)
+	for _, k := range keys {
+
+		// Exclude any JWT keys
+		if strings.ToUpper(k) == "JWT" {
+			continue
+		}
+
+		vs := vals[k]
+
+		// Escaped encoding is upper case
+		// QueryEscape does this for us
+		encKey := url.QueryEscape(k)
+
+		// QueryEscape encodes spaces as +.  According to Atlassian, they
+		// must be encoded as %20
+		prefix := strings.Replace(encKey, "+", "%20", -1) + "="
+
+		encodedVals := make([]string, 0, len(keys))
+
+		// Repeated parameters must be sorted
+		sort.Strings(vs)
+		for _, v := range vs {
+			encVal := url.QueryEscape(v)
+			encodedVals = append(encodedVals, strings.Replace(encVal, "+", "%20", -1))
+		}
+		if buf.Len() > 0 {
+			buf.WriteByte('&')
+		}
+		buf.WriteString(prefix)
+
+		// Repeated parameters to be in comma-delimited list
+		buf.WriteString(strings.Join(encodedVals, ","))
+	}
+
+	return buf.String()
 }
 
 // Transport is a http.RoundTripper for tagging requests
