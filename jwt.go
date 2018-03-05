@@ -128,7 +128,7 @@ func encodeQuery(vals url.Values) string {
 		keys = append(keys, k)
 	}
 
-	// Keys must be sortedd
+	// Keys must be sorted
 	sort.Strings(keys)
 	for _, k := range keys {
 
