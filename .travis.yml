@@ -10,8 +10,6 @@ before_install:
   - curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
   # Make the binary executable
   - chmod +x $GOPATH/bin/dep
-  # Install to build pages
-  - nvm install 4
 
 
 install:
@@ -25,7 +23,3 @@ go:
 
 script:
   - GOMAXPROCS=4 GORACE="halt_on_error=1" go test -race -v ./...
-  - npm install docpress && ./node_modules/.bin/docpress build
-
-after_success:
-  - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then npm install git-update-ghpages && ./node_modules/.bin/git-update-ghpages -e; fi
