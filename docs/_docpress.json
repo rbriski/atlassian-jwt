@@ -1,0 +1,57 @@
+{
+  "toc": {
+    "sections": [
+      {
+        "title": "atlassian-jwt",
+        "source": "README.md",
+        "url": "index.html",
+        "slug": "index",
+        "headings": [
+          {
+            "title": "Installation",
+            "depth": 2,
+            "id": "installation"
+          },
+          {
+            "title": "Usage (with go-jira)",
+            "depth": 2,
+            "id": "usage-(with-go-jira)"
+          },
+          {
+            "title": "Examples",
+            "depth": 2,
+            "id": "examples"
+          }
+        ]
+      }
+    ]
+  },
+  "index": {
+    "index.html": {
+      "source": "README.md",
+      "title": "atlassian-jwt",
+      "pageTitle": "atlassian-jwt",
+      "slug": "index",
+      "headings": [
+        {
+          "title": "Installation",
+          "depth": 2,
+          "id": "installation"
+        },
+        {
+          "title": "Usage (with go-jira)",
+          "depth": 2,
+          "id": "usage-(with-go-jira)"
+        },
+        {
+          "title": "Examples",
+          "depth": 2,
+          "id": "examples"
+        }
+      ]
+    }
+  },
+  "sources": {
+    "README.md": "index.html"
+  }
+}

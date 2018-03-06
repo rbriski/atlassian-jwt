@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="assets/style.css?t=615badd5">
+    <script src="assets/script.js?t=42463e55"></script>
+    <title>atlassian-jwt</title>
+    <meta name="viewport" content="width=device-width">
+  </head>
+  <body class="-menu-visible">
+    <div class="doc-layout">
+      <div class="toggle menu-toggle js-menu-toggle"></div>
+      <div class="menu toc-menu">
+        <li class="menu-item -level-0 -parent">
+          <ul class="submenu">
+            <li class="menu-item -level-1"><a class="link title -active link-index" href="index.html">atlassian-jwt</a>
+              <ul class="headings heading-list">
+                <li class="heading-item -depth-2"><a class="hlink link-installation" href="#installation">Installation</a>
+                </li>
+                <li class="heading-item -depth-2"><a class="hlink link-usage-(with-go-jira)" href="#usage-(with-go-jira)">Usage (with go-jira)</a>
+                </li>
+                <li class="heading-item -depth-2"><a class="hlink link-examples" href="#examples">Examples</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </div>
+      <div class="body page-index">
+        <div class="header-nav">
+          <div class="right"><a class="iconlink" href="https://github.com/rbriski/atlassian-jwt" data-title="rbriski/atlassian-jwt">
+              <!-- span.title Open in GitHub--><span class="icon -github"></span></a>
+          </div>
+        </div>
+        <div class="markdown-body"><h1 id="atlassian-jwt">atlassian-jwt</h1>
+<h1 align="center" id="jwt-library-for-atlassian-in-go.">
+  <br>
+  <img src="https://i.imgur.com/aG5AhlH.png" alt="atlassian-jwt">
+  <br>
+  JWT library for Atlassian in Go.
+  <br>
+  <br>
+</h1>
+<p align="center">
+<a href="https://travis-ci.org/rbriski/atlassian-jwt"><img src="https://travis-ci.org/rbriski/atlassian-jwt.svg?branch=master" alt="Build Status"></a>
+</p>
+<p><code>atlassian-jwt</code> is a library that makes it easy to authenticate with JIRA from a variety of app types.</p>
+<h2 id="installation">Installation</h2>
+<pre><code class="lang-bash">go get github.com/rbriski/atlassian-jwt
+</code></pre>
+<h2 id="usage-(with-go-jira)">Usage (with go-jira)</h2>
+<pre><code class="lang-go"><span class="pl-k">import</span> (
+    jira <span class="pl-s">&quot;github.com/andygrunwald/go-jira&quot;</span>
+    jwt <span class="pl-s">&quot;github.com/rbriski/atlassian-jwt&quot;</span>
+)
+
+c := &amp;jwt.Config{
+    Key: <span class="pl-s">&quot;some_key&quot;</span>,
+    ClientKey: <span class="pl-s">&quot;some_client_key&quot;</span>,
+    SharedSecret: <span class="pl-s">&quot;so_freakin_secret&quot;</span>,
+    BaseUrl: <span class="pl-s">&quot;http://example.com&quot;</span>,
+}
+
+<span class="pl-c">// Pass the JWT client into the library client</span>
+jiraClient, _ := jira.NewClient(c.Client(), c.BaseURL)
+</code></pre>
+<h2 id="examples">Examples</h2>
+<p>There are a number of different ways that an app can authenticate with JIRA.  Right now, <code>atlassian-jwt</code> only handles JWT authentication as an add-on.</p>
+<p>Using ngrok, you can spin up a <a href="https://github.com/rbriski/atlassian-jwt/blob/master/examples/jwt/main.go">working example</a> to authenticate with.</p>
+<pre><code class="lang-bash">&gt; <span class="pl-c1">cd</span> examples/jwt
+&gt; BASE_URL=https://&lt;some_string&gt;.ngrok.io go run main.go
+</code></pre>
+
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
