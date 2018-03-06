@@ -13,7 +13,7 @@
 <a href="https://travis-ci.org/rbriski/atlassian-jwt"><img src="https://travis-ci.org/rbriski/atlassian-jwt.svg?branch=master" alt="Build Status"></a>
 </p>
 
-atlassian-jwt is a library that makes it easy to authenticate with JIRA from a variety of app types.
+`atlassian-jwt` is a library that makes it easy to authenticate with JIRA from a variety of app types.
 
 ## Installation
 
@@ -44,7 +44,7 @@ jiraClient, _ := jira.NewClient(c.Client(), c.BaseURL)
 
 There are a number of different ways that an app can authenticate with JIRA.  Right now, `atlassian-jwt` only handles JWT authentication as an add-on.  
 
-Using ngrok, you can spin up a [working example](examples/jwt/main.go) to authenticate with.
+Using ngrok, you can spin up a [working example](https://github.com/rbriski/atlassian-jwt/blob/master/examples/jwt/main.go) to authenticate with.
 
 ```bash
 > cd examples/jwt
