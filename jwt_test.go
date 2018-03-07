@@ -1,7 +1,6 @@
 package jwt
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -181,7 +180,6 @@ func (d *DummyConfig) SetAuthHeader(req *http.Request) error {
 	if u.Path == "/error" {
 		return errors.New("This is an error")
 	}
-	fmt.Printf("%v\n", u)
 
 	req.Header.Set("Authorization", "test")
 	return nil
