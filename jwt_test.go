@@ -1,10 +1,12 @@
-package jwt_test
+package jwt
 
 import (
+	"fmt"
+	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	jwt "github.com/rbriski/atlassian-jwt"
+	"github.com/pkg/errors"
 )
 
 // Using http://jwt-decoder.herokuapp.com/jwt/decode as a check
@@ -117,7 +119,7 @@ var qshTestData = []struct {
 
 // TestQSH is all according to https://developer.atlassian.com/cloud/bitbucket/query-string-hash/
 func TestQSH(t *testing.T) {
-	dummy := &jwt.Config{}
+	dummy := &Config{}
 	for _, data := range qshTestData {
 		req := httptest.NewRequest(data.method, data.url, nil)
 		qsh := dummy.QSH(req)
@@ -128,7 +130,7 @@ func TestQSH(t *testing.T) {
 }
 
 func TestClaimsExpirationAfterIssued(t *testing.T) {
-	dummy := &jwt.Config{Key: "some_key"}
+	dummy := &Config{Key: "some_key"}
 	claims := dummy.Claims("blah")
 	if claims.IssuedAt > claims.ExpiresAt {
 		t.Errorf("ExpiredAt should occur after IssuedAt")
@@ -136,14 +138,14 @@ func TestClaimsExpirationAfterIssued(t *testing.T) {
 }
 
 func TestClaimsIssuerIsKey(t *testing.T) {
-	dummy := &jwt.Config{Key: "some_key"}
+	dummy := &Config{Key: "some_key"}
 	claims := dummy.Claims("blah")
 	if claims.Issuer != dummy.Key {
 		t.Errorf("Expected %s, got %s", dummy.Key, claims.Issuer)
 	}
 }
 func TestClaimsQSHIsAdded(t *testing.T) {
-	dummy := &jwt.Config{Key: "some_key"}
+	dummy := &Config{Key: "some_key"}
 	claims := dummy.Claims("blah")
 	if claims.QSH == "" {
 		t.Errorf("Expected QSH to be added to claims")
@@ -151,7 +153,7 @@ func TestClaimsQSHIsAdded(t *testing.T) {
 }
 
 func TestClaimsQSHIsCorrect(t *testing.T) {
-	dummy := &jwt.Config{Key: "some_key"}
+	dummy := &Config{Key: "some_key"}
 	claims := dummy.Claims("blah")
 	if claims.QSH != "blah" {
 		t.Errorf("Expected %s, got %s", "blah", claims.QSH)
@@ -159,7 +161,7 @@ func TestClaimsQSHIsCorrect(t *testing.T) {
 }
 
 func TestAuthHeaderIsSet(t *testing.T) {
-	dummy := &jwt.Config{
+	dummy := &Config{
 		Key:          "some_key",
 		SharedSecret: "some_shared_secret",
 	}
@@ -170,6 +172,68 @@ func TestAuthHeaderIsSet(t *testing.T) {
 	}
 }
 
-func TestTransportSetsAuthHeader(t *testing.T)   {}
-func TestTransportUsesBase(t *testing.T)         {}
+type DummyConfig struct {
+	Key string
+}
+
+func (d *DummyConfig) SetAuthHeader(req *http.Request) error {
+	u := req.URL
+	if u.Path == "/error" {
+		return errors.New("This is an error")
+	}
+	fmt.Printf("%v\n", u)
+
+	req.Header.Set("Authorization", "test")
+	return nil
+}
+
+func TestTransportNilConfig(t *testing.T) {
+	tr := &Transport{}
+
+	handler := func(w http.ResponseWriter, r *http.Request) {}
+	srv := httptest.NewServer(http.HandlerFunc(handler))
+	defer srv.Close()
+
+	client := &http.Client{Transport: tr}
+	resp, err := client.Get(srv.URL)
+	if err == nil {
+		t.Errorf("got no errors, want an error with nil token source")
+	}
+	if resp != nil {
+		t.Errorf("Response = %v; want nil", resp)
+	}
+}
+
+func TestTransportSetsAuthHeader(t *testing.T) {
+	tr := &Transport{
+		Config: &DummyConfig{},
+	}
+
+	handler := func(w http.ResponseWriter, r *http.Request) {}
+	srv := httptest.NewServer(http.HandlerFunc(handler))
+	defer srv.Close()
+
+	client := &http.Client{Transport: tr}
+	resp, _ := client.Get(srv.URL)
+	req := resp.Request
+	if req.Header.Get("Authorization") == "" {
+		t.Errorf("Authorization header was not set.")
+	}
+}
+
+func TestTransportUsesBase(t *testing.T) {
+	// default transport
+	tp := &Transport{}
+	if tp.base() != http.DefaultTransport {
+		t.Errorf("Expected http.DefaultTransport to be used.")
+	}
+
+	// custom transport
+	tp = &Transport{
+		Base: &http.Transport{},
+	}
+	if tp.base() == http.DefaultTransport {
+		t.Errorf("Expected custom transport to be used.")
+	}
+}
 func TestTransportUsesDefaultOnNil(t *testing.T) {}
