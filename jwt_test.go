@@ -126,3 +126,50 @@ func TestQSH(t *testing.T) {
 		}
 	}
 }
+
+func TestClaimsExpirationAfterIssued(t *testing.T) {
+	dummy := &jwt.Config{Key: "some_key"}
+	claims := dummy.Claims("blah")
+	if claims.IssuedAt > claims.ExpiresAt {
+		t.Errorf("ExpiredAt should occur after IssuedAt")
+	}
+}
+
+func TestClaimsIssuerIsKey(t *testing.T) {
+	dummy := &jwt.Config{Key: "some_key"}
+	claims := dummy.Claims("blah")
+	if claims.Issuer != dummy.Key {
+		t.Errorf("Expected %s, got %s", dummy.Key, claims.Issuer)
+	}
+}
+func TestClaimsQSHIsAdded(t *testing.T) {
+	dummy := &jwt.Config{Key: "some_key"}
+	claims := dummy.Claims("blah")
+	if claims.QSH == "" {
+		t.Errorf("Expected QSH to be added to claims")
+	}
+}
+
+func TestClaimsQSHIsCorrect(t *testing.T) {
+	dummy := &jwt.Config{Key: "some_key"}
+	claims := dummy.Claims("blah")
+	if claims.QSH != "blah" {
+		t.Errorf("Expected %s, got %s", "blah", claims.QSH)
+	}
+}
+
+func TestAuthHeaderIsSet(t *testing.T) {
+	dummy := &jwt.Config{
+		Key:          "some_key",
+		SharedSecret: "some_shared_secret",
+	}
+	req := httptest.NewRequest("GET", "https://example.com", nil)
+	dummy.SetAuthHeader(req)
+	if req.Header.Get("Authorization") == "" {
+		t.Errorf("Expected Authorization header to be set")
+	}
+}
+
+func TestTransportSetsAuthHeader(t *testing.T)   {}
+func TestTransportUsesBase(t *testing.T)         {}
+func TestTransportUsesDefaultOnNil(t *testing.T) {}
