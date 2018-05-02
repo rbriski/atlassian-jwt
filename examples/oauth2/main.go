@@ -105,12 +105,12 @@ func installed(c *jwt.Config) func(w http.ResponseWriter, r *http.Request) {
 		// should probably save the security context somewhere
 		// and create the config from that.  This app only works if you install
 		// it and never shut it down.
-		c.AuthURL = "https://auth.atlassian.io"
 		c.BaseURL = sc.BaseURL
-		c.OauthClientID = sc.OauthClientID
-		c.SharedSecret = sc.SharedSecret
 		c.Subject = "admin"
-		c.TokenURL = "https://auth.atlassian.io/oauth2/token"
+		c.Config.ClientID = sc.OauthClientID
+		c.Config.ClientSecret = sc.SharedSecret
+		c.Config.Endpoint.AuthURL = "https://auth.atlassian.io"
+		c.Config.Endpoint.TokenURL = "https://auth.atlassian.io/oauth2/token"
 
 		json.NewEncoder(w).Encode([]string{"OK"})
 	}
