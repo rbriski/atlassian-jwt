@@ -1,0 +1,52 @@
+{{define "config"}}{
+    "key": "jira-golang-oauth2-example",
+    "name": "Golang ouath2 example add-on",
+    "description": "Some add-on examples in Go",
+    "vendor": {
+      "name": "Bob Briski",
+      "url": "https://github.com/rbriski"
+    },
+    "baseUrl": "{{ .BaseURL }}",
+    "links": {
+      "self": "{{ .BaseURL }}/atlassian-connect.json",
+      "homepage": "{{ .BaseURL }}/atlassian-connect.json"
+    },
+    "authentication": {
+      "type": "jwt"
+    },
+    "lifecycle": {
+      "installed": "/installed",
+      "uninstalled": "/uninstalled",
+      "enabled": "/enabled"
+    },
+    "scopes": [
+      "ACT_AS_USER",
+      "ADMIN",
+      "READ",
+      "WRITE",
+      "PROJECT_ADMIN"
+    ],
+    "modules": {
+      "webhooks": [
+        {
+          "event": "jira:issue_created",
+          "url": "/issue_event"
+        },
+        {
+          "event": "jira:issue_deleted",
+          "url": "/issue_event"
+        },
+        {
+          "event": "jira:issue_updated",
+          "url": "/issue_event"
+        }
+      ]
+    }
+  }
+  {{ end }}
+
+
+
+
+
+
