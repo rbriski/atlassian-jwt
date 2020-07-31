@@ -51,7 +51,7 @@ type AuthSetter interface {
 // an Atlassian JWT
 func (c *Config) Claims(qsh string) *AtlassianClaims {
 	issuedAt := time.Now()
-	expiresAt := issuedAt.Add(180 * time.Second)
+	expiresAt := issuedAt.Add(59 * time.Second)
 
 	return &AtlassianClaims{
 		qsh,
