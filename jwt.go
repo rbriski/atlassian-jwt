@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	jwt "github.com/golang-jwt/jwt/v5"
 	"github.com/pkg/errors"
 )
 
@@ -36,7 +36,7 @@ type Config struct {
 type AtlassianClaims struct {
 	QSH string `json:"qsh"`
 
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 // A AuthSetter is anything that can set the authorization header
@@ -55,9 +55,9 @@ func (c *Config) Claims(qsh string) *AtlassianClaims {
 
 	return &AtlassianClaims{
 		qsh,
-		jwt.StandardClaims{
-			IssuedAt:  issuedAt.Unix(),
-			ExpiresAt: expiresAt.Unix(),
+		jwt.RegisteredClaims{
+			IssuedAt:  jwt.NewNumericDate(issuedAt),
+			ExpiresAt: jwt.NewNumericDate(expiresAt),
 			Issuer:    c.Key,
 		},
 	}
