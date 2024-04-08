@@ -131,7 +131,7 @@ func TestQSH(t *testing.T) {
 func TestClaimsExpirationAfterIssued(t *testing.T) {
 	dummy := &Config{Key: "some_key"}
 	claims := dummy.Claims("blah")
-	if claims.IssuedAt > claims.ExpiresAt {
+	if claims.IssuedAt.After(claims.ExpiresAt.Time) {
 		t.Errorf("ExpiredAt should occur after IssuedAt")
 	}
 }
