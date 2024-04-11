@@ -93,6 +93,16 @@ func (c *Config) SetAuthHeader(r *http.Request) error {
 	return nil
 }
 
+// Path returns the path of the request.
+// Normalise the base url as confluence requests include a /wiki
+func (c *Config) Path(req *http.Request) string {
+	url := *req.URL
+	url.RawQuery = ""
+	return strings.TrimPrefix(url.String(), c.BaseURL)
+	path := req.URL.Path
+	return path
+}
+
 // QSH returns the query string hash for this request
 // https://developer.atlassian.com/cloud/bitbucket/query-string-hash/
 func (c *Config) QSH(req *http.Request) string {
@@ -100,7 +110,7 @@ func (c *Config) QSH(req *http.Request) string {
 	method := strings.ToUpper(req.Method)
 
 	// Path can not contain &
-	path := strings.Replace(req.URL.Path, "&", "%26", -1)
+	path := strings.Replace(c.Path(req), "&", "%26", -1)
 	params := encodeQuery(req.URL.Query())
 
 	// Join method, path and params with &
