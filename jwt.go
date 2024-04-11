@@ -99,8 +99,6 @@ func (c *Config) Path(req *http.Request) string {
 	url := *req.URL
 	url.RawQuery = ""
 	return strings.TrimPrefix(url.String(), c.BaseURL)
-	path := req.URL.Path
-	return path
 }
 
 // QSH returns the query string hash for this request
