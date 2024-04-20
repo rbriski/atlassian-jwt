@@ -15,6 +15,9 @@
 
 `atlassian-jwt` is a library that makes it easy to authenticate with JIRA from a variety of app types.
 
+# Not maintained
+Head on over to [[https://github.com/golang-jwt/jwt][https://github.com/golang-jwt/jwt]] for the most up-to-date library.
+
 ## Installation
 
 ```bash
